@@ -14,13 +14,24 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
-Auth::routes();
+Auth::routes(['register'=>true,'reset'=>true]);
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::get('/broadcast', function () {
-    broadcast(new Test());
+Route::get('message', function () {
+    $message['user'] = "Juan Perez";
+    $message['message'] =  "Prueba mensaje desde Pusher";
+    $success = event(new App\Events\NewMessage($message));
+    return $success;
 });
+
+Route::get('/vue-message', function () {
+    return view('message');
+});
+
+Route::get('articles', 'ArticleController@index');
+Route::get('articles/{article}', 'ArticleController@show');
+Route::post('articles', 'ArticleController@store');
+Route::put('articles/{article}', 'ArticleController@update');
+Route::delete('articles/{article}', 'ArticleController@delete');
